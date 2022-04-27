@@ -52,10 +52,12 @@ const kGasolineDescr = 'Estimated Gas Consumption';
 const kLitersDescr = 'Liters';
 const kPropaneDescr = 'Propane';
 const kPropaneTanksDescr = 'Tanks';
-const kProppaneDeliveryDescr = 'Delivery';
+const kElectricity = 'Electricity';
+const kPropaneDeliveryDescr = 'Propane Delivery';
 const kFirewoodDescr = 'Firewood';
 const kFirewoodCordsDescr = 'Cords';
-const kFireWoodDeliveryDescr = 'Hours to Deliver';
+const kFirewoodDeliveryDescr = 'Firewood Delivery';
+const kHoursToDeliverDescr = 'Hours to Deliver';
 const kMaintenance = 'Maintenance';
 const kExtrasDescr = 'Extras';
 const kTelephoneDescr = 'Telephone Calls';
@@ -65,7 +67,9 @@ const kDescriptionDescr = 'Description';
 const kAmountDescr = 'Amount';
 
 const kCardConvenienceFeeDescr = 'Card Convenience Fee';
-const kPayingBillWithCardDescr = 'Paying Bill with Credit Card';
+const kCardConvenienceFeeDescrShort = 'Card Fee';
+const kPayingClubBillWithCardDescr = 'Paying Club Bill with Card';
+const kPayingMgrBillWithCardDescr = 'Paying Service Marc Bill with Card';
 const kTipDescr = 'Tip';
 const kResultsStep = 'Summary Results';
 const kGrandTotal = 'Grand Total';
@@ -101,8 +105,8 @@ const kChildClass2DescrLabel = kChildClass2Descr + kLabelEnderSymbol;
 const kChildClass3DescrLabel = kChildClass3Descr + kLabelEnderSymbol;
 const kChildClass4DescrLabel = kChildClass4Descr + kLabelEnderSymbol;
 
-const kArrivalDay = 'Day of Arrival:';
-const kDepartureDay = 'Day of Departure:';
+const kArrivalDay = 'Day of Arrival';
+const kDepartureDay = 'Day of Departure';
 
 const kBoardDescr = 'Board';
 const kBoardAdultDescr = kAdultDescr + ' ' + kBoardDescr + kLabelEnderSymbol;
@@ -118,3 +122,6 @@ const kBoardChildClass4Descr =
 const kBreakfastDescr = 'Breakfast';
 const kLunchDescr = 'Lunch';
 const kDinnerDescr = 'Dinner';
+
+const kClubDescr = 'Club';
+const kMgrDescr = 'Service Marc';

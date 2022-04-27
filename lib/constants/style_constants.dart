@@ -22,6 +22,11 @@ const kSubHeaderTextStyle = TextStyle(
   fontSize: 18.0,
 );
 
+const kSummarySubheaderTextStyle = TextStyle(
+  fontSize: 18.0,
+  fontWeight: FontWeight.bold,
+);
+
 const kEstimateListingTextStyle = TextStyle(
   fontSize: 16.0,
 );

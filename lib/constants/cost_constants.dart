@@ -68,6 +68,6 @@ const Map kCostRates = {
     'laundry_load_charge': 18.00,
     'gst_percentage': 0.05,
     'pst_percentage': 0.09975,
-    'credit_card_fee_percentage': 0.0275
+    'card_convenience_fee_percentage': 0.0275
   },
 };

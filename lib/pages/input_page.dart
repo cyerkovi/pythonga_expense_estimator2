@@ -135,9 +135,9 @@ class InputPage extends StatefulWidget {
             json.containsKey('member_boat_class3_in_out')
                 ? json['member_boat_class3_in_out']
                 : 0,
-        this.memberBoatGasLiters = json.containsKey('member_boat_gas_liters')
-            ? json['member_boat_gas_liters']
-            : 0,
+        // this.memberBoatGasLiters = json.containsKey('member_boat_gas_liters')
+        //     ? json['member_boat_gas_liters']
+        //     : 0,
         this.memberEngineClass1Winterize =
             json.containsKey('member_engine_class1_winterize')
                 ? json['member_engine_class1_winterize']
@@ -148,9 +148,8 @@ class InputPage extends StatefulWidget {
                 : 0,
         this.rentalBoatList =
             fromJsonRentalBoatList(json['rental_boat_rentals']),
-        this.rentalBoatGasLiters = json.containsKey('rental_boat_gas_liters')
-            ? json['rental_boat_gas_liters']
-            : 0,
+        this.gasLiters =
+            json.containsKey('gas_liters') ? json['gas_liters'] : 0,
         this.telephoneCalls =
             json.containsKey('telephone_calls') ? json['telephone_calls'] : 0,
         this.internetAccesses = json.containsKey('internet_accesses')
@@ -171,8 +170,11 @@ class InputPage extends StatefulWidget {
             ? json['propane_delivery_charge']
             : 0,
         this.tipAmt = json.containsKey('tip') ? json['tip'] : 0,
-        this.payingWithCard = json.containsKey('paying_with_card')
-            ? json['paying_with_card']
+        this.payingWithCardClub = json.containsKey('paying_with_card_club')
+            ? json['paying_with_card_club']
+            : false,
+        this.payingWithCardMgr = json.containsKey('paying_with_card_mgr')
+            ? json['paying_with_card_mgr']
             : false,
         this.miscChargesList = json.containsKey('misc_charges')
             ? fromJsonMiscChargeList(json['misc_charges'])
@@ -214,11 +216,11 @@ class InputPage extends StatefulWidget {
         'member_boat_class1_in_out': memberBoatClass1InOut,
         'member_boat_class2_in_out': memberBoatClass2InOut,
         'member_boat_class3_in_out': memberBoatClass3InOut,
-        'member_boat_gas_liters': memberBoatGasLiters,
+        // 'member_boat_gas_liters': memberBoatGasLiters,
         'member_engine_class1_winterize': memberEngineClass1Winterize,
         'member_engine_class2_winterize': memberEngineClass2Winterize,
         'rental_boat_rentals': toJsonRentalBoat(),
-        'rental_boat_gas_liters': rentalBoatGasLiters,
+        'gas_liters': gasLiters,
         'telephone_calls': telephoneCalls,
         'internet_accesses': internetAccesses,
         'laundry_loads': laundryLoads,
@@ -229,7 +231,8 @@ class InputPage extends StatefulWidget {
         'propane_tanks': propaneTanks,
         'propane_delivery_charge': propaneDeliveryCharge,
         'tip': tipAmt,
-        'paying_with_card': payingWithCard,
+        'paying_with_card_club': payingWithCardClub,
+        'paying_with_card_mgr': payingWithCardMgr,
         'misc_charges': toJsonMiscCharge(),
       };
 
@@ -327,7 +330,7 @@ class InputPage extends StatefulWidget {
   int memberBoatClass1InOut = 0;
   int memberBoatClass2InOut = 0;
   int memberBoatClass3InOut = 0;
-  int memberBoatGasLiters = 0;
+  // int memberBoatGasLiters = 0;
 
   int memberEngineClass1Winterize = 0;
   int memberEngineClass2Winterize = 0;
@@ -338,7 +341,7 @@ class InputPage extends StatefulWidget {
     kRentalBoatClass2Descr,
     kRentalBoatClass3Descr
   ];
-  int rentalBoatGasLiters = 0;
+  int gasLiters = 0;
   int telephoneCalls = 0;
   int internetAccesses = 0;
   int laundryLoads = 0;
@@ -349,7 +352,8 @@ class InputPage extends StatefulWidget {
   int propaneTanks = 0;
   double propaneDeliveryCharge = 0;
   double tipAmt = 0;
-  bool payingWithCard = false;
+  bool payingWithCardClub = false;
+  bool payingWithCardMgr = false;
   List<dynamic> miscChargesList = [];
 
   /*
@@ -414,7 +418,7 @@ class _InputPageState extends State<InputPage> {
   int memberBoatClass1InOut = 0;
   int memberBoatClass2InOut = 0;
   int memberBoatClass3InOut = 0;
-  int memberBoatGasLiters = 0;
+  // int memberBoatGasLiters = 0;
 
   int memberEngineClass1Winterize = 0;
   int memberEngineClass2Winterize = 0;
@@ -429,7 +433,7 @@ class _InputPageState extends State<InputPage> {
     kRentalBoatClass2Descr,
     kRentalBoatClass3Descr
   ];
-  int rentalBoatGasLiters = 0;
+  int gasLiters = 0;
   int telephoneCalls = 0;
   int internetAccesses = 0;
   int laundryLoads = 0;
@@ -440,7 +444,8 @@ class _InputPageState extends State<InputPage> {
   int propaneTanks = 0;
   double propaneDeliveryCharge = 0;
   double tipAmt = 0;
-  bool payingWithCard = false;
+  bool payingWithCardClub = false;
+  bool payingWithCardMgr = false;
   List<dynamic> miscChargesList = [];
 
   String textToStoreInFile() {
@@ -508,24 +513,68 @@ class _InputPageState extends State<InputPage> {
     Navigator.pop(context);
   }
 
-  /* -------------------- grand total calculation --------------------------*/
+  /* -------------------- grand total methods --------------------------*/
   double grandTotal() {
+    /*
     double total =
         taxableTotal() + taxTotal() + tipTotal() + cardConvenienceFeeTotal();
     return monetaryAmountRounded(total);
+     */
+    return grandTotalClub() + grandTotalMgr() + tipTotal();
   }
 
-  double creditCardTotal() {
+  double grandTotalClub() {
+    return monetaryAmountRounded(
+        taxableTotalClub() + taxTotalClub() + cardConvenienceFeeClub());
+  }
+
+  double grandTotalMgr() {
+    return monetaryAmountRounded(
+        taxableTotalMgr() + taxTotalMgr() + cardConvenienceFeeMgr());
+  }
+
+  double cardTotal() {
     // used to determine card convenience fee
-    return taxableTotal() + taxTotal();
+    // return taxableTotal() + taxTotal();
+    return cardTotalClub() + cardTotalMgr();
+  }
+
+  double cardTotalClub() {
+    return taxableTotalClub() + taxTotalClub();
+  }
+
+  double cardTotalMgr() {
+    return taxableTotalMgr() + taxTotalMgr();
   }
 
   /* --------------------beginning of tax methods----------------------------*/
 
   double taxableTotal() {
+    /*
     return totalBoardCharges() +
         totalGuestFees() +
         totalMemberCabinCharge() +
+        totalClubCabinRentalCharge() +
+        totalMemberBoatCharge() +
+        totalRentalBoatCharges() +
+        totalExtraCharges();
+        */
+    return taxableTotalClub() + taxableTotalMgr();
+  }
+
+  double taxableTotalClub() {
+    // just propane and firewood and electric
+
+    return totalMemberCabinChargeClub();
+  }
+
+  double taxableTotalMgr() {
+    // include wood and propane  delivery
+
+    return totalBoardCharges() +
+        totalGuestFees() +
+        totalGasCharge() +
+        totalMemberCabinChargeMgr() +
         totalClubCabinRentalCharge() +
         totalMemberBoatCharge() +
         totalRentalBoatCharges() +
@@ -544,18 +593,48 @@ class _InputPageState extends State<InputPage> {
     return monetaryAmountRounded(pstTotal() + gstTotal());
   }
 
-  double pstTotal() {
-    double rate = kCostRates[tripYear]['pst_percentage'];
+  double taxTotalClub() {
+    return monetaryAmountRounded(pstTotalClub() + gstTotalClub());
+  }
 
-    return taxCalc(rate, taxableTotal());
+  double taxTotalMgr() {
+    return monetaryAmountRounded(pstTotalMgr() + gstTotalMgr());
+  }
+
+  double pstRate() {
+    return kCostRates[tripYear]['pst_percentage'];
+  }
+
+  double pstTotal() {
+    // double rate = kCostRates[tripYear]['pst_percentage'];
+
+    return taxCalc(pstRate(), taxableTotal());
+  }
+
+  double pstTotalClub() {
+    return taxCalc(pstRate(), taxableTotalClub());
+  }
+
+  double pstTotalMgr() {
+    return taxCalc(pstRate(), taxableTotalMgr());
+  }
+
+  double gstRate() {
+    return kCostRates[tripYear]['gst_percentage'];
   }
 
   double gstTotal() {
-    double rate = kCostRates[tripYear]['gst_percentage'];
-    return taxCalc(rate, taxableTotal());
+    //double rate = kCostRates[tripYear]['gst_percentage'];
+    return taxCalc(gstRate(), taxableTotal());
   }
 
-  /* -------------------- end of tax methods---------------------------------*/
+  double gstTotalClub() {
+    return taxCalc(gstRate(), taxableTotalClub());
+  }
+
+  double gstTotalMgr() {
+    return taxCalc(gstRate(), taxableTotalMgr());
+  }
 
   /* --------------------beginning of date methods----------------------*/
 
@@ -596,8 +675,6 @@ class _InputPageState extends State<InputPage> {
     //print(numberOfDays);
     return numberOfDays;
   }
-
-  /* -------------------------end of date methods------------------------*/
 
   /* ------------------- beginning of people methods ------------------*/
 
@@ -669,8 +746,6 @@ class _InputPageState extends State<InputPage> {
         (boardPartialDays() + numberOfFullBoardDays()), nNumChildClass4);
   }
 
-  /* --------------------end of board methods--------------------------------*/
-
   /*--------------------beginning of guest fee methods-----------------------*/
 
   double guestFeeCalc(int numberOfGuests, double dailyRate) {
@@ -733,16 +808,29 @@ class _InputPageState extends State<InputPage> {
         ['minimum_number_of_days_charged_per_guest']);
   }
 
-  /*------------------- end of guest fee methods ---------------------------*/
-
   /* ----------------- beginning of member cabin methods -------------------*/
 
   double totalMemberCabinCharge() {
+    /*
     return memberCabinOpenCloseCharge() +
         memberCabinElectricityCharge() +
         memberCabinCleaningCharge() +
         memberCabinFirewoodCharge() +
         memberCabinPropaneCharge();
+     */
+    return totalMemberCabinChargeClub() + totalMemberCabinChargeMgr();
+  }
+
+  double totalMemberCabinChargeMgr() {
+    return memberCabinOpenCloseCharge() +
+        memberCabinCleaningCharge() +
+        memberCabinPropaneDeliveryCharge();
+  }
+
+  double totalMemberCabinChargeClub() {
+    return memberCabinFirewoodWoodCharge() +
+        memberCabinPropanePropaneCharge() +
+        memberCabinElectricityCharge();
   }
 
   double memberCabinOpenCloseCharge() {
@@ -818,8 +906,6 @@ class _InputPageState extends State<InputPage> {
     double rate = (kCostRates[tripYear]['propane_delivery_charge']);
     return monetaryAmountRounded(rate * propaneDeliveryCharge);
   }
-
-  /* ----------------- end of member cabin methods --------------------------*/
 
   /* ------------------ beginning of cabin rental methods -------------------*/
 
@@ -1009,18 +1095,18 @@ class _InputPageState extends State<InputPage> {
     return petSurchargeRate().toStringAsFixed(kCurrencyPrecision);
   }
 
-  /* ----------------- end of cabin rental methods -------------------------*/
-
   /* ------------------ beginning of gasoline methods ---------------------*/
 
   double totalGasCharge() {
-    return totalMemberBoatGasCharge() + totalRentalBoatGasCharges();
+    // return totalMemberBoatGasCharge() + totalRentalBoatGasCharges();
+    return monetaryAmountRounded(gasPrice() * gasLiters);
   }
 
   double gasPrice() {
     return (kCostRates[tripYear]['gasoline_price_per_liter']).toDouble();
   }
 
+  /*
   double totalRentalBoatGasCharges() {
     return monetaryAmountRounded(gasPrice() * rentalBoatGasLiters);
   }
@@ -1029,7 +1115,7 @@ class _InputPageState extends State<InputPage> {
     return monetaryAmountRounded(gasPrice() * memberBoatGasLiters);
   }
 
-  /* ------------------- end of gasoline methods ------------------------- */
+   */
 
   /* ----------------- beginning of member boat methods --------------------*/
   double totalMemberBoatCharge() {
@@ -1087,8 +1173,6 @@ class _InputPageState extends State<InputPage> {
     return memberEngineWinterizeCharge(rate, memberEngineClass2Winterize);
   }
 
-  /* ----------------- end of member boat methods --------------------*/
-
   /* ------------------ beginning of boat rental methods ------------*/
   double totalRentalBoatCharges() {
     return totalRentalBoatRentCharges();
@@ -1108,8 +1192,6 @@ class _InputPageState extends State<InputPage> {
     }
     return boatChargeAccumulator;
   }
-
-  /* ------------------ end of boat rental methods ------------------------*/
 
   /* ------------------- beginning of extras methods ----------------------*/
 
@@ -1148,29 +1230,37 @@ class _InputPageState extends State<InputPage> {
     return totalCharges;
   }
 
-  /* ------------------- end of extras methods ----------------------*/
-
   /* ------------------- beginning of tip methods ------------------*/
 
   double tipTotal() {
     return tipAmt;
   }
 
-  /* ------------------- end of tip methods ------------------*/
-
-  /* -------------beginning of credit card convenience fee methods --------*/
+  /* -------------beginning of card convenience fee methods --------*/
 
   double cardConvenienceFeeTotal() {
-    double fee = 0;
-    if (payingWithCard) {
-      double rate =
-          (kCostRates[tripYear]['credit_card_fee_percentage']).toDouble();
-      fee = monetaryAmountRounded(rate * creditCardTotal());
-    }
-    return fee;
+    return cardConvenienceFeeClub() + cardConvenienceFeeMgr();
   }
 
-  /* ------------- end of card convenience fee methods -------------*/
+  double cardConvenienceRate() {
+    return (kCostRates[tripYear]['card_convenience_fee_percentage']).toDouble();
+  }
+
+  double cardConvenienceFeeClub() {
+    double fee = 0;
+    if (payingWithCardClub) {
+      fee = cardConvenienceRate() * cardTotalClub();
+    }
+    return monetaryAmountRounded(fee);
+  }
+
+  double cardConvenienceFeeMgr() {
+    double fee = 0;
+    if (payingWithCardClub) {
+      fee = cardConvenienceRate() * cardTotalMgr();
+    }
+    return monetaryAmountRounded(fee);
+  }
 
   /* -------------------beginning of step list -----------------------------*/
 
@@ -1558,120 +1648,180 @@ class _InputPageState extends State<InputPage> {
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
                 child: Text(numberOfFullBoardDaysString()),
               ),
-              const Text(kArrivalDay),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                child: Row(
-                  children: [
-                    Checkbox(
-                        value: includeArrivalDayBreakfast,
-                        onChanged: (bool? newValue) {
-                          setState(() {
-                            includeArrivalDayBreakfast = newValue!;
-                            widget.includeArrivalDayBreakfast =
-                                includeArrivalDayBreakfast;
-                          });
-                        }),
-                    Text(kBreakfastDescr),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                child: Row(
-                  children: [
-                    Checkbox(
-                        value: includeArrivalDayLunch,
-                        onChanged: (bool? newValue) {
-                          setState(() {
-                            includeArrivalDayLunch = newValue!;
-                            widget.includeArrivalDayLunch =
-                                includeArrivalDayLunch;
-                          });
-                        }),
-                    Text(kLunchDescr)
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                child: Row(
-                  children: [
-                    Checkbox(
-                        value: includeArrivalDayDinner,
-                        onChanged: (bool? newValue) {
-                          setState(() {
-                            includeArrivalDayDinner = newValue!;
-                            widget.includeArrivalDayDinner =
-                                includeArrivalDayDinner;
-                          });
-                        }),
-                    Text(kDinnerDescr)
-                  ],
-                ),
-              ),
-              const Text(kDepartureDay),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                child: Row(
-                  children: [
-                    Checkbox(
-                        value: includeDepartureDayBreakfast,
-                        onChanged: (bool? newValue) {
-                          setState(() {
-                            includeDepartureDayBreakfast = newValue!;
-                            widget.includeDepartureDayBreakfast =
-                                includeDepartureDayBreakfast;
-                          });
-                        }),
-                    Text(kBreakfastDescr),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                child: Row(
-                  children: [
-                    Checkbox(
-                        value: includeDepartureDayLunch,
-                        onChanged: (bool? newValue) {
-                          setState(() {
-                            includeDepartureDayLunch = newValue!;
-                            widget.includeDepartureDayLunch =
-                                includeDepartureDayLunch;
-                          });
-                        }),
-                    Text(kLunchDescr)
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                child: Row(
-                  children: [
-                    Checkbox(
-                        value: includeDepartureDayDinner,
-                        onChanged: (bool? newValue) {
-                          setState(() {
-                            includeDepartureDayDinner = newValue!;
-                            widget.includeDepartureDayDinner =
-                                includeDepartureDayDinner;
-                          });
-                        }),
-                    Text(kDinnerDescr)
-                  ],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(kArrivalDay),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                              value: includeArrivalDayBreakfast,
+                              onChanged: (bool? newValue) {
+                                setState(() {
+                                  includeArrivalDayBreakfast = newValue!;
+                                  widget.includeArrivalDayBreakfast =
+                                      includeArrivalDayBreakfast;
+                                });
+                              }),
+                          Text(kBreakfastDescr),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                              value: includeArrivalDayLunch,
+                              onChanged: (bool? newValue) {
+                                setState(() {
+                                  includeArrivalDayLunch = newValue!;
+                                  widget.includeArrivalDayLunch =
+                                      includeArrivalDayLunch;
+                                });
+                              }),
+                          Text(kLunchDescr)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Checkbox(
+                              value: includeArrivalDayDinner,
+                              onChanged: (bool? newValue) {
+                                setState(() {
+                                  includeArrivalDayDinner = newValue!;
+                                  widget.includeArrivalDayDinner =
+                                      includeArrivalDayDinner;
+                                });
+                              }),
+                          Text(kDinnerDescr)
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(kDepartureDay),
+                      Row(
+                        children: [
+                          Checkbox(
+                              value: includeDepartureDayBreakfast,
+                              onChanged: (bool? newValue) {
+                                setState(() {
+                                  includeDepartureDayBreakfast = newValue!;
+                                  widget.includeDepartureDayBreakfast =
+                                      includeDepartureDayBreakfast;
+                                });
+                              }),
+                          Text(kBreakfastDescr),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Checkbox(
+                              value: includeDepartureDayLunch,
+                              onChanged: (bool? newValue) {
+                                setState(() {
+                                  includeDepartureDayLunch = newValue!;
+                                  widget.includeDepartureDayLunch =
+                                      includeDepartureDayLunch;
+                                });
+                              }),
+                          Text(kLunchDescr)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Checkbox(
+                              value: includeDepartureDayDinner,
+                              onChanged: (bool? newValue) {
+                                setState(() {
+                                  includeDepartureDayDinner = newValue!;
+                                  widget.includeDepartureDayDinner =
+                                      includeDepartureDayDinner;
+                                });
+                              }),
+                          Text(kDinnerDescr)
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
         ),
-        /* ------------------beginning of member cabins step -------------------------- */
+
+        /* ------------------beginning of gas step ------------- */
+
+        Step(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const StepText(
+                text: kGasDescr,
+              ),
+              Visibility(
+                visible: totalGasCharge() != 0,
+                child: Text(
+                  totalGasCharge().toStringAsFixed(kCurrencyPrecision),
+                  style: kStepTitleTextStyle,
+                ),
+              ),
+            ],
+          ),
+          content: Column(children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(kLitersDescr),
+                Row(
+                  children: [
+                    RoundIconButton(
+                        icon: FontAwesomeIcons.plus,
+                        onPressed: () {
+                          setState(() {
+                            gasLiters = gasLiters + literIncrement;
+                            widget.gasLiters = gasLiters;
+                          });
+                        }),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        gasLiters.toString(),
+                        style: kNumberTextStyle,
+                      ),
+                    ),
+                    RoundIconButton(
+                        icon: FontAwesomeIcons.minus,
+                        onPressed: () {
+                          setState(() {
+                            if (gasLiters > literIncrement) {
+                              gasLiters = gasLiters - literIncrement;
+                            } else {
+                              gasLiters = 0;
+                            }
+                            widget.gasLiters = gasLiters;
+                          });
+                        }),
+                  ],
+                ),
+              ],
+            ),
+          ]),
+        ),
+        /* ------------------beginning of member cabins step ------------- */
         Step(
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1931,7 +2081,7 @@ class _InputPageState extends State<InputPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kFireWoodDeliveryDescr),
+                        Text(kHoursToDeliverDescr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2535,50 +2685,6 @@ class _InputPageState extends State<InputPage> {
                         ),
                       ]),
                 ),
-                Text(kGasolineDescr),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 0, 4),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(kLitersDescr),
-                        Row(
-                          children: [
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.plus,
-                                onPressed: () {
-                                  setState(() {
-                                    memberBoatGasLiters =
-                                        memberBoatGasLiters + literIncrement;
-                                    widget.memberBoatGasLiters =
-                                        memberBoatGasLiters;
-                                  });
-                                }),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                memberBoatGasLiters.toString(),
-                                style: kNumberTextStyle,
-                              ),
-                            ),
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.minus,
-                                onPressed: () {
-                                  setState(() {
-                                    if (memberBoatGasLiters > literIncrement) {
-                                      memberBoatGasLiters =
-                                          memberBoatGasLiters - literIncrement;
-                                    } else {
-                                      memberBoatGasLiters = 0;
-                                    }
-                                    widget.memberBoatGasLiters =
-                                        memberBoatGasLiters;
-                                  });
-                                }),
-                          ],
-                        ),
-                      ]),
-                ),
                 Text(kMemberEngineWinterizeDescr),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 0, 4),
@@ -2682,7 +2788,6 @@ class _InputPageState extends State<InputPage> {
               ),
             ],
           ),
-
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -2808,64 +2913,6 @@ class _InputPageState extends State<InputPage> {
                         ),
                       ]);
                     }),
-              ),
-              Visibility(
-                visible: rentalBoatList.isNotEmpty,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: const [
-                      Text(kGasolineDescr),
-                    ],
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: rentalBoatList.isNotEmpty,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(kLitersDescr),
-                        Row(
-                          children: [
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.plus,
-                                onPressed: () {
-                                  setState(() {
-                                    rentalBoatGasLiters =
-                                        rentalBoatGasLiters + literIncrement;
-                                    widget.rentalBoatGasLiters =
-                                        rentalBoatGasLiters;
-                                  });
-                                }),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                rentalBoatGasLiters.toString(),
-                                style: kNumberTextStyle,
-                              ),
-                            ),
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.minus,
-                                onPressed: () {
-                                  setState(() {
-                                    if (rentalBoatGasLiters > literIncrement) {
-                                      rentalBoatGasLiters =
-                                          rentalBoatGasLiters - literIncrement;
-                                    } else {
-                                      rentalBoatGasLiters = 0;
-                                    }
-                                    widget.rentalBoatGasLiters =
-                                        rentalBoatGasLiters;
-                                  });
-                                }),
-                          ],
-                        ),
-                      ]),
-                ),
               ),
             ],
           ),
@@ -3169,13 +3216,13 @@ class _InputPageState extends State<InputPage> {
                         initialValue: tipAmt.toString(),
                         maxLength: 7,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          hintText: kAmountDescr,
-                          hintStyle: kHintTextStyle,
-                        ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            tipAmt = double.parse(newValue!);
+                            if (newValue!.isNotEmpty) {
+                              tipAmt = double.parse(newValue);
+                            } else {
+                              tipAmt = 0;
+                            }
                             widget.tipAmt = tipAmt;
                           });
                         }),
@@ -3206,18 +3253,33 @@ class _InputPageState extends State<InputPage> {
           content: Column(
             children: [
               Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Checkbox(
-                      value: payingWithCard,
+                      value: payingWithCardClub,
                       onChanged: (bool? newValue) {
                         setState(() {
-                          payingWithCard = newValue!;
-                          widget.payingWithCard = payingWithCard;
+                          payingWithCardClub = newValue!;
+                          widget.payingWithCardClub = payingWithCardClub;
                         });
                       }),
-                  Text(kPayingBillWithCardDescr),
+                  Text(kPayingClubBillWithCardDescr),
+                ],
+              ),
+              Row(
+                // mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Checkbox(
+                      value: payingWithCardMgr,
+                      onChanged: (bool? newValue) {
+                        setState(() {
+                          payingWithCardMgr = newValue!;
+                          widget.payingWithCardMgr = payingWithCardMgr;
+                        });
+                      }),
+                  Text(kPayingMgrBillWithCardDescr),
                 ],
               ),
             ],
@@ -3240,133 +3302,233 @@ class _InputPageState extends State<InputPage> {
             ],
           ),
           content: Column(
-            mainAxisSize: MainAxisSize.min,
+            // mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /*
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(kGrandTotal),
-                  Text(grandTotal().toStringAsFixed(kCurrencyPrecision)),
-                ],
-              ),
-              */
-              Visibility(
-                visible: totalBoardCharges() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kBoardDescr),
-                    Text(totalBoardCharges()
-                        .toStringAsFixed(kCurrencyPrecision)),
-                  ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                child: Visibility(
+                  visible: grandTotalClub() != 0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(kClubDescr, style: kSummarySubheaderTextStyle),
+                          Text(
+                            grandTotalClub()
+                                .toStringAsFixed(kCurrencyPrecision),
+                            style: kSummarySubheaderTextStyle,
+                          ),
+                        ],
+                      ),
+                      Visibility(
+                        visible: memberCabinElectricityCharge() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kElectricity),
+                            Text(memberCabinElectricityCharge()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: memberCabinFirewoodWoodCharge() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kFirewoodDescr),
+                            Text(memberCabinFirewoodWoodCharge()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: memberCabinPropanePropaneCharge() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kPropaneDescr),
+                            Text(memberCabinPropanePropaneCharge()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: taxTotalClub() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kTaxesDescr),
+                            Text(taxTotalClub()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: cardConvenienceFeeClub() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kCardConvenienceFeeDescrShort),
+                            Text(cardConvenienceFeeClub()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Visibility(
-                visible: totalGuestFees() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kGuestFeeDescr),
-                    Text(totalGuestFees().toStringAsFixed(kCurrencyPrecision)),
-                  ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                child: Visibility(
+                  visible: grandTotalMgr() != 0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            kMgrDescr,
+                            style: kSummarySubheaderTextStyle,
+                          ),
+                          Text(
+                            grandTotalMgr().toStringAsFixed(kCurrencyPrecision),
+                            style: kSummarySubheaderTextStyle,
+                          ),
+                        ],
+                      ),
+                      Visibility(
+                        visible: totalBoardCharges() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kBoardDescr),
+                            Text(totalBoardCharges()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: totalGuestFees() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kGuestFeeDescr),
+                            Text(totalGuestFees()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: totalMemberCabinChargeMgr() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kMemberCabinChargesDescr),
+                            Text(totalMemberCabinChargeMgr()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: totalClubCabinRentalCharge() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kClubCabinRentalDescr),
+                            Text(totalClubCabinRentalCharge()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: totalGasCharge() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kGasDescr),
+                            Text(totalGasCharge()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: totalMemberBoatCharge() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kMemberBoatDescr),
+                            Text(totalMemberBoatCharge()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: totalRentalBoatCharges() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kBoatRentalDescr),
+                            Text(totalRentalBoatCharges()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: totalExtraCharges() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kExtrasDescr),
+                            Text(totalExtraCharges()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: taxTotalMgr() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kTaxesDescr),
+                            Text(taxTotalMgr()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: cardConvenienceFeeMgr() != 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(kCardConvenienceFeeDescrShort),
+                            Text(cardConvenienceFeeMgr()
+                                .toStringAsFixed(kCurrencyPrecision)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Visibility(
-                visible: totalMemberCabinCharge() != 0,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(kMemberCabinChargesDescr),
-                    Text(totalMemberCabinCharge()
-                        .toStringAsFixed(kCurrencyPrecision)),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: totalClubCabinRentalCharge() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kClubCabinRentalDescr),
-                    Text(totalClubCabinRentalCharge()
-                        .toStringAsFixed(kCurrencyPrecision)),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: totalGasCharge() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kGasDescr),
-                    Text(totalGasCharge().toStringAsFixed(kCurrencyPrecision)),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: totalMemberBoatCharge() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kMemberBoatDescr),
-                    Text(totalMemberBoatCharge()
-                        .toStringAsFixed(kCurrencyPrecision)),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: totalRentalBoatCharges() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kBoatRentalDescr),
-                    Text(totalRentalBoatCharges()
-                        .toStringAsFixed(kCurrencyPrecision)),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: totalExtraCharges() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kExtrasDescr),
-                    Text(totalExtraCharges()
-                        .toStringAsFixed(kCurrencyPrecision)),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: tipTotal() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kTipDescr),
-                    Text(tipTotal().toStringAsFixed(kCurrencyPrecision)),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: taxTotal() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kTaxesDescr),
-                    Text(taxTotal().toStringAsFixed(kCurrencyPrecision)),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: cardConvenienceFeeTotal() != 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(kCardConvenienceFeeDescr),
-                    Text(cardConvenienceFeeTotal()
-                        .toStringAsFixed(kCurrencyPrecision)),
+                    Text(kTipDescr, style: kSummarySubheaderTextStyle),
+                    Text(
+                      tipTotal().toStringAsFixed(kCurrencyPrecision),
+                      style: kSummarySubheaderTextStyle,
+                    ),
                   ],
                 ),
               ),
@@ -3415,7 +3577,7 @@ class _InputPageState extends State<InputPage> {
     memberEngineClass1Winterize = widget.memberEngineClass1Winterize;
     memberEngineClass2Winterize = widget.memberEngineClass2Winterize;
     rentalBoatList = widget.rentalBoatList;
-    rentalBoatGasLiters = widget.rentalBoatGasLiters;
+    gasLiters = widget.gasLiters;
     telephoneCalls = widget.telephoneCalls;
     internetAccesses = widget.internetAccesses;
     laundryLoads = widget.laundryLoads;
@@ -3426,7 +3588,8 @@ class _InputPageState extends State<InputPage> {
     propaneTanks = widget.propaneTanks;
     propaneDeliveryCharge = widget.propaneDeliveryCharge;
     tipAmt = widget.tipAmt;
-    payingWithCard = widget.payingWithCard;
+    payingWithCardClub = widget.payingWithCardClub;
+    payingWithCardMgr = widget.payingWithCardMgr;
     miscChargesList = widget.miscChargesList;
   }
 
