@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'dart:convert';
+// import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as pathpkg;
 import '../components/bottom_button.dart';
@@ -48,6 +49,26 @@ class _FileListingState extends State<FileListing> {
     }
   }
 
+  String filenameAlias(file) {
+    //sync read will not work
+    // try async read
+    String fileContent = file.readAsStringSync();
+    // sleep(const Duration(seconds: 5));
+    Map decodedData = {"estimate_name": "fake_trip"};
+    // var decodedData = jsonDecode(fileContent);
+    String estimateName = 'bb';
+    if (decodedData.containsKey('estimate_name')) {
+      if (decodedData['estimate_name'].isEmpty) {
+        estimateName = 'cc';
+      } else {
+        estimateName = decodedData['estimate_name'];
+      }
+    } else {
+      estimateName = 'dd';
+    }
+    return estimateName;
+  }
+
   /*
   String filenameAlias(file) {
     String fileContent = file.readAsStringSync();
@@ -72,7 +93,7 @@ class _FileListingState extends State<FileListing> {
         await getSavedEstimates(); //returns Future<Map<dynamic,dynamic>>
     List<Widget> newList = [];
     fileHits.forEach((k, v) {
-      // String fileNameUserFacing = filenameAlias(k);
+      String fileNameUserFacing = filenameAlias(k);
       newList.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

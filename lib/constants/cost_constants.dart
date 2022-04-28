@@ -16,8 +16,8 @@ const Map kCostRates = {
       kChildClass4: 0.00
     },
     'guest_fees': {
-      'daily_fee_guest_of_reqular_member': 25,
-      'daily_fee_guest_of_junior_member': 10,
+      'daily_fee_guest_of_reqular_member': 0,
+      'daily_fee_guest_of_junior_member': 0,
       'minimum_number_of_days_charged_per_guest': 2,
       'maximum_daily_fee_per_guest_family': 50
     },

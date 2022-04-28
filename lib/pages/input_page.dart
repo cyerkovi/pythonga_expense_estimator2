@@ -36,8 +36,8 @@ class InputPage extends StatefulWidget {
       : this.title = 'Title PageX',
         this.isNewEstimate = false,
         this.fileName = json['file_name'],
-        // this.estimateName =
-        //     json.containsKey('estimate_name') ? json['estimate_name'] : ' ',
+        this.estimateName =
+            json.containsKey('estimate_name') ? json['estimate_name'] : '',
         this.arrivalDate = transformJsonDateTime(json['arrival_date']),
         this.departureDate = transformJsonDateTime(json['departure_date']),
         this.nNumAdults =
@@ -183,7 +183,7 @@ class InputPage extends StatefulWidget {
 
   Map<String, dynamic> toJson() => {
         'file_name': fileName,
-        // 'estimate_name': estimateName,
+        'estimate_name': estimateName,
         'arrival_date': arrivalDate?.toIso8601String(),
         'departure_date': departureDate?.toIso8601String(),
         'num_adults': nNumAdults,
@@ -294,6 +294,9 @@ class InputPage extends StatefulWidget {
   // String? estimateName = '';
   DateTime? arrivalDate;
   DateTime? departureDate;
+
+  String estimateName = '';
+
   int nNumAdults = 0;
   int nNumChildClass1 = 0;
   int nNumChildClass2 = 0;
@@ -380,7 +383,7 @@ class _InputPageState extends State<InputPage> {
   DateTime? arrivalDate;
   DateTime? departureDate;
 
-  // String? estimateName = '';
+  String estimateName = '';
 
   int nNumAdults = 0;
   int nNumChildClass1 = 0;
@@ -806,6 +809,14 @@ class _InputPageState extends State<InputPage> {
   int guestFeeMinDays() {
     return (kCostRates[tripYear]['guest_fees']
         ['minimum_number_of_days_charged_per_guest']);
+  }
+
+  bool guestFeesWaived() {
+    if (guestFeeRegular() == 0 && guestFeeJunior() == 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /* ----------------- beginning of member cabin methods -------------------*/
@@ -1539,93 +1550,107 @@ class _InputPageState extends State<InputPage> {
                     ),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 4, 4),
-                  child: Text(kGuests, style: kInstructionTextStyle),
+                Visibility(
+                  visible: !guestFeesWaived(),
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 4, 4),
+                    child: Text(
+                      kGuests,
+                      style: kInstructionTextStyle,
+                    ),
+                  ),
                 ),
-                Row(
-                  children: [
-                    const Text(kGuestRegularDescr, style: kBodyTextStyle),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 4, 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.plus,
-                                onPressed: () {
-                                  setState(() {
-                                    nNumGuestRegular++;
-                                    widget.nNumGuestRegular = nNumGuestRegular;
-                                  });
-                                }),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                nNumGuestRegular.toString(),
-                                style: kNumberTextStyle,
+                Visibility(
+                  visible: !guestFeesWaived(),
+                  child: Row(
+                    children: [
+                      const Text(kGuestRegularDescr, style: kBodyTextStyle),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 4, 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              RoundIconButton(
+                                  icon: FontAwesomeIcons.plus,
+                                  onPressed: () {
+                                    setState(() {
+                                      nNumGuestRegular++;
+                                      widget.nNumGuestRegular =
+                                          nNumGuestRegular;
+                                    });
+                                  }),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  nNumGuestRegular.toString(),
+                                  style: kNumberTextStyle,
+                                ),
                               ),
-                            ),
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.minus,
-                                onPressed: () {
-                                  setState(() {
-                                    if (nNumGuestRegular > 0) {
-                                      nNumGuestRegular--;
-                                    } else {
-                                      nNumGuestRegular = 0;
-                                    }
-                                    widget.nNumGuestRegular = nNumGuestRegular;
-                                  });
-                                }),
-                          ],
+                              RoundIconButton(
+                                  icon: FontAwesomeIcons.minus,
+                                  onPressed: () {
+                                    setState(() {
+                                      if (nNumGuestRegular > 0) {
+                                        nNumGuestRegular--;
+                                      } else {
+                                        nNumGuestRegular = 0;
+                                      }
+                                      widget.nNumGuestRegular =
+                                          nNumGuestRegular;
+                                    });
+                                  }),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                Row(
-                  children: [
-                    const Text(kGuestJuniorDescr, style: kBodyTextStyle),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 4, 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.plus,
-                                onPressed: () {
-                                  setState(() {
-                                    nNumGuestJunior++;
-                                    widget.nNumGuestJunior = nNumGuestJunior;
-                                  });
-                                }),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                nNumGuestJunior.toString(),
-                                style: kNumberTextStyle,
+                Visibility(
+                  visible: !guestFeesWaived(),
+                  child: Row(
+                    children: [
+                      const Text(kGuestJuniorDescr, style: kBodyTextStyle),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 4, 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              RoundIconButton(
+                                  icon: FontAwesomeIcons.plus,
+                                  onPressed: () {
+                                    setState(() {
+                                      nNumGuestJunior++;
+                                      widget.nNumGuestJunior = nNumGuestJunior;
+                                    });
+                                  }),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  nNumGuestJunior.toString(),
+                                  style: kNumberTextStyle,
+                                ),
                               ),
-                            ),
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.minus,
-                                onPressed: () {
-                                  setState(() {
-                                    if (nNumGuestJunior > 0) {
-                                      nNumGuestJunior--;
-                                    } else {
-                                      nNumGuestJunior = 0;
-                                    }
-                                    widget.nNumGuestJunior = nNumGuestJunior;
-                                  });
-                                }),
-                          ],
+                              RoundIconButton(
+                                  icon: FontAwesomeIcons.minus,
+                                  onPressed: () {
+                                    setState(() {
+                                      if (nNumGuestJunior > 0) {
+                                        nNumGuestJunior--;
+                                      } else {
+                                        nNumGuestJunior = 0;
+                                      }
+                                      widget.nNumGuestJunior = nNumGuestJunior;
+                                    });
+                                  }),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ]),
         ),
@@ -3070,7 +3095,10 @@ class _InputPageState extends State<InputPage> {
                         color: Colors.grey,
                       ),
                     ),
-                    Text('Additional Expenses', style: kSubHeaderTextStyle),
+                    Text(
+                      kAdditionalExpensesDescr,
+                      style: kSubHeaderTextStyle,
+                    ),
                     Expanded(
                       child: Divider(
                         height: 20,
@@ -3541,9 +3569,9 @@ class _InputPageState extends State<InputPage> {
 
   @override
   void initState() {
-    // estimateName = widget.estimateName;
     arrivalDate = widget.arrivalDate;
     departureDate = widget.departureDate;
+    estimateName = widget.estimateName;
     nNumAdults = widget.nNumAdults;
     nNumChildClass1 = widget.nNumChildClass1;
     nNumChildClass2 = widget.nNumChildClass2;
@@ -3593,6 +3621,8 @@ class _InputPageState extends State<InputPage> {
     miscChargesList = widget.miscChargesList;
   }
 
+  /* -------------beginning of widget build------------------------ */
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -3607,7 +3637,6 @@ class _InputPageState extends State<InputPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                /*
                 Expanded(
                   child: TextFormField(
                     initialValue: estimateName,
@@ -3618,13 +3647,18 @@ class _InputPageState extends State<InputPage> {
                     ),
                     onChanged: (String? newValue) {
                       setState(() {
-                        estimateName = newValue!;
+                        if (newValue!.isNotEmpty) {
+                          estimateName = newValue;
+                        } else {
+                          estimateName = '';
+                        }
                         widget.estimateName = estimateName;
+                        // estimateName = newValue!;
+                        // widget.estimateName = estimateName;
                       });
                     },
                   ),
                 ),
-                */
               ],
             ),
             Flexible(

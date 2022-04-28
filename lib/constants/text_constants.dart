@@ -1,6 +1,6 @@
 const kAppTitle1 = 'Pythonga Cost Calculator';
 const kAppTitle2 = 'Cost Calculator';
-// const kEstimateNameHint = 'Name this Estimate (optional)';
+const kEstimateNameHint = 'Name this Estimate (required)';
 const kYourTripsDescr = 'Your Trips';
 const kYourEstimatesDescr = 'Your Estimates';
 const kEstimateTripDescr = 'New Estimate';
@@ -65,6 +65,7 @@ const kInternetDescr = 'Internet Users';
 const kLaundryDescr = 'Loads of Laundry';
 const kDescriptionDescr = 'Description';
 const kAmountDescr = 'Amount';
+const kAdditionalExpensesDescr = 'Additional Expenses';
 
 const kCardConvenienceFeeDescr = 'Card Convenience Fee';
 const kCardConvenienceFeeDescrShort = 'Card Fee';
