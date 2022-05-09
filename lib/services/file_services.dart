@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as pathpkg;
 import '../services/directory_services.dart';
-import '../constants/text_constants.dart';
 
 class FileHelper {
   FileHelper(this.fileName, this.fileContents);
@@ -11,31 +10,31 @@ class FileHelper {
   String fileContents;
 
   static Future<String> getNewFileName() async {
-    print("in fileHelper.getNewFileName");
+    //print("in fileHelper.getNewFileName");
     var fileHits = await getSavedEstimates();
-    print("number of file hits is");
-    print(fileHits.length);
-    print(fileHits);
+    //print("number of file hits is");
+    //print(fileHits.length);
+    //print(fileHits);
     List fileNamesAsInts = [];
     fileHits.forEach((k, v) {
       String fileNameString = pathpkg.basenameWithoutExtension(k.path);
-      print("fileNameString is");
-      print(fileNameString);
+      //print("fileNameString is");
+      //print(fileNameString);
       if (isInteger(fileNameString)) {
-        print("file name is an integer");
+        //print("file name is an integer");
         fileNamesAsInts.add(int.parse(fileNameString));
       }
     });
-    print("fileNamesAsInts length is");
-    print(fileNamesAsInts.length);
-    print(fileNamesAsInts);
+    //print("fileNamesAsInts length is");
+    //print(fileNamesAsInts.length);
+    //print(fileNamesAsInts);
     if (fileNamesAsInts.isEmpty) {
       return 1.toString();
     } else {
       fileNamesAsInts.sort();
       int highestFileNumber = fileNamesAsInts.last;
       String fileNameWithoutExtension = (highestFileNumber + 1).toString();
-      return '$fileNameWithoutExtension';
+      return fileNameWithoutExtension;
     }
   }
 
@@ -46,8 +45,8 @@ class FileHelper {
         // print(resp);
         return resp;
       });
-      print('got all files from data folder');
-      print(savedEstimates);
+      //print('got all files from data folder');
+      //print(savedEstimates);
       savedEstimates.forEach((key, value) => print(key));
       return savedEstimates;
     } catch (e) {
@@ -64,14 +63,14 @@ class FileHelper {
 
   static bool isInteger(String s) {
     if (isNumeric(s)) {
-      print('file name is numeric');
+      //print('file name is numeric');
       num numToTest = int.parse(s);
 
-      print("numToTest is");
-      print(numToTest);
-      print(numToTest.runtimeType);
-      print("numToTest is int");
-      print(numToTest is int);
+      //print("numToTest is");
+      //print(numToTest);
+      //print(numToTest.runtimeType);
+      //print("numToTest is int");
+      //print(numToTest is int);
 
       return numToTest is int;
     }
@@ -103,7 +102,7 @@ class FileHelper {
   Future<File> writeStringToFile() async {
     final file = await _localFile();
     try {
-      print("writing to file from writeStringToFile");
+      //print("writing to file from writeStringToFile");
       return file.writeAsString(fileContents);
     } catch (e) {
       print("write failed");

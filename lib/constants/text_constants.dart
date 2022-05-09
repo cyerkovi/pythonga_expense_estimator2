@@ -1,9 +1,16 @@
 const kAppTitle1 = 'Pythonga Cost Calculator';
 const kAppTitle2 = 'Cost Calculator';
-const kEstimateNameHint = 'Name this Estimate (required)';
+const kPasscodeDescr = 'Enter the Passcode';
+const kPasscodeDescr2 = 'Please Enter the Passcode';
+const kPasscodeIncorrectMessage = ' is Incorrect - Try Again';
+const kEstimateNameHint = 'Name this Estimate (optional)';
 const kYourTripsDescr = 'Your Trips';
 const kYourEstimatesDescr = 'Your Estimates';
 const kEstimateTripDescr = 'New Estimate';
+const kConfirmationDescr = 'Confirmation';
+const kConfirmationDescr2 = 'Sure?';
+const kDeleteDescr = 'Delete';
+const kDoNotDeleteDescr = 'Do Not Delete';
 const kTaxesDescr = 'Taxes';
 
 const kSaveDescr = 'Save';
@@ -72,6 +79,8 @@ const kCardConvenienceFeeDescrShort = 'Card Fee';
 const kPayingClubBillWithCardDescr = 'Paying Club Bill with Card';
 const kPayingMgrBillWithCardDescr = 'Paying Service Marc Bill with Card';
 const kTipDescr = 'Tip';
+const kTipPctDescr = 'As Percent of Board';
+const kTipAmtDescr = 'Additional Amount';
 const kResultsStep = 'Summary Results';
 const kGrandTotal = 'Grand Total';
 const kGrandTotalDescr = '$kGrandTotal$kLabelEnderSymbol';
@@ -98,6 +107,7 @@ const kSpace = ' ';
 // const kEstimateFileExtension = '.txt';
 const kEstimateFileExtension = '.json';
 const kCurrencySymbol = '\$';
+const kPercentSymbol = '%';
 const kNumberPlaceholder = 'XXX';
 
 const kAdultDescrLabel = kAdultDescr + kLabelEnderSymbol;

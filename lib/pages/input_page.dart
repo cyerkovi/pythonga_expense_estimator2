@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:io';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../components/bottom_button.dart';
 import '../components/step_text.dart';
 import '../constants/cost_constants.dart';
@@ -33,150 +32,141 @@ class InputPage extends StatefulWidget {
       : super(key: key);
 
   InputPage.fromJson(Map<String, dynamic> json, {Key? key})
-      : this.title = 'Title PageX',
-        this.isNewEstimate = false,
-        this.fileName = json['file_name'],
-        this.estimateName =
+      : title = 'Title PageX',
+        isNewEstimate = false,
+        fileName = json['file_name'],
+        estimateName =
             json.containsKey('estimate_name') ? json['estimate_name'] : '',
-        this.arrivalDate = transformJsonDateTime(json['arrival_date']),
-        this.departureDate = transformJsonDateTime(json['departure_date']),
-        this.nNumAdults =
-            json.containsKey('num_adults') ? json['num_adults'] : 0,
-        this.nNumChildClass1 =
+        arrivalDate = transformJsonDateTime(json['arrival_date']),
+        departureDate = transformJsonDateTime(json['departure_date']),
+        nNumAdults = json.containsKey('num_adults') ? json['num_adults'] : 0,
+        nNumChildClass1 =
             json.containsKey('num_child_class1') ? json['num_child_class1'] : 0,
-        this.nNumChildClass2 =
+        nNumChildClass2 =
             json.containsKey('num_child_class2') ? json['num_child_class2'] : 0,
-        this.nNumChildClass3 =
+        nNumChildClass3 =
             json.containsKey('num_child_class3') ? json['num_child_class3'] : 0,
-        this.nNumChildClass4 =
+        nNumChildClass4 =
             json.containsKey('num_child_class4') ? json['num_child_class4'] : 0,
-        this.includeArrivalDayBreakfast =
-            json.containsKey('arrival_day_breakfast')
-                ? json['arrival_day_breakfast']
-                : false,
-        this.includeArrivalDayLunch = json.containsKey('arrival_day_lunch')
+        includeArrivalDayBreakfast = json.containsKey('arrival_day_breakfast')
+            ? json['arrival_day_breakfast']
+            : false,
+        includeArrivalDayLunch = json.containsKey('arrival_day_lunch')
             ? json['arrival_day_lunch']
             : false,
-        this.includeArrivalDayDinner = json.containsKey('arrival_day_dinner')
+        includeArrivalDayDinner = json.containsKey('arrival_day_dinner')
             ? json['arrival_day_dinner']
             : true,
-        this.includeDepartureDayBreakfast =
+        includeDepartureDayBreakfast =
             json.containsKey('departure_day_breakfast')
                 ? json['departure_day_breakfast']
                 : true,
-        this.includeDepartureDayLunch = json.containsKey('departure_day_lunch')
+        includeDepartureDayLunch = json.containsKey('departure_day_lunch')
             ? json['departure_day_lunch']
             : false,
-        this.includeDepartureDayDinner =
-            json.containsKey('departure_day_dinner')
-                ? json['departure_day_dinner']
-                : false,
-        this.nNumGuestRegular = json.containsKey('num_guest_regular')
+        includeDepartureDayDinner = json.containsKey('departure_day_dinner')
+            ? json['departure_day_dinner']
+            : false,
+        nNumGuestRegular = json.containsKey('num_guest_regular')
             ? json['num_guest_regular']
             : 0,
-        this.nNumGuestJunior =
+        nNumGuestJunior =
             json.containsKey('num_guest_junior') ? json['num_guest_junior'] : 0,
-        this.memberCabinOpenClose = json.containsKey('member_cabin_open_close')
+        memberCabinOpenClose = json.containsKey('member_cabin_open_close')
             ? json['member_cabin_open_close']
             : false,
-        this.memberCabinOnClubElectricity =
+        memberCabinOnClubElectricity =
             json.containsKey('member_cabin_on_club_electricity')
                 ? json['member_cabin_on_club_electricity']
                 : false,
-        this.nNumOfToiletsToWinterize =
-            json.containsKey('num_toilets_to_winterize')
-                ? json['num_toilets_to_winterize']
-                : 0,
-        this.memberCabinCleaning = json.containsKey('member_cabin_cleaning')
+        nNumOfToiletsToWinterize = json.containsKey('num_toilets_to_winterize')
+            ? json['num_toilets_to_winterize']
+            : 0,
+        memberCabinCleaning = json.containsKey('member_cabin_cleaning')
             ? json['member_cabin_cleaning']
             : false,
-        this.memberCabinCleaningHours =
+        memberCabinCleaningHours =
             json.containsKey('member_cabin_cleaning_hours')
                 ? json['member_cabin_cleaning_hours']
                 : 0,
-        this.rentalClubCabin1 = json.containsKey('club_cabin_1_rental')
+        rentalClubCabin1 = json.containsKey('club_cabin_1_rental')
             ? json['club_cabin_1_rental']
             : false,
-        this.peopleInClubCabin1 = json.containsKey('club_cabin_1_occupants')
+        peopleInClubCabin1 = json.containsKey('club_cabin_1_occupants')
             ? json['club_cabin_1_occupants']
             : 0,
-        this.petInClubCabin1 = json.containsKey('club_cabin_1_pet')
+        petInClubCabin1 = json.containsKey('club_cabin_1_pet')
             ? json['club_cabin_1_pet']
             : false,
-        this.rentalClubCabin2 = json.containsKey('club_cabin_2_rental')
+        rentalClubCabin2 = json.containsKey('club_cabin_2_rental')
             ? json['club_cabin_2_rental']
             : false,
-        this.peopleInClubCabin2 = json.containsKey('club_cabin_2_occupants')
+        peopleInClubCabin2 = json.containsKey('club_cabin_2_occupants')
             ? json['club_cabin_2_occupants']
             : 0,
-        this.petInClubCabin2 = json.containsKey('club_cabin_2_pet')
+        petInClubCabin2 = json.containsKey('club_cabin_2_pet')
             ? json['club_cabin_2_pet']
             : false,
-        this.rentalClubCabinCasino =
-            json.containsKey('club_cabin_casino_rental')
-                ? json['club_cabin_casino_rental']
-                : false,
-        this.peopleInClubCabinCasino =
+        rentalClubCabinCasino = json.containsKey('club_cabin_casino_rental')
+            ? json['club_cabin_casino_rental']
+            : false,
+        peopleInClubCabinCasino =
             json.containsKey('club_cabin_casino_occupants')
                 ? json['club_cabin_casino_occupants']
                 : 0,
-        this.petInClubCabinCasino = json.containsKey('club_cabin_casino_pet')
+        petInClubCabinCasino = json.containsKey('club_cabin_casino_pet')
             ? json['club_cabin_casino_pet']
             : false,
-        this.memberBoatClass1InOut =
-            json.containsKey('member_boat_class1_in_out')
-                ? json['member_boat_class1_in_out']
-                : 0,
-        this.memberBoatClass2InOut =
-            json.containsKey('member_boat_class2_in_out')
-                ? json['member_boat_class2_in_out']
-                : 0,
-        this.memberBoatClass3InOut =
-            json.containsKey('member_boat_class3_in_out')
-                ? json['member_boat_class3_in_out']
-                : 0,
+        memberBoatClass1InOut = json.containsKey('member_boat_class1_in_out')
+            ? json['member_boat_class1_in_out']
+            : 0,
+        memberBoatClass2InOut = json.containsKey('member_boat_class2_in_out')
+            ? json['member_boat_class2_in_out']
+            : 0,
+        memberBoatClass3InOut = json.containsKey('member_boat_class3_in_out')
+            ? json['member_boat_class3_in_out']
+            : 0,
         // this.memberBoatGasLiters = json.containsKey('member_boat_gas_liters')
         //     ? json['member_boat_gas_liters']
         //     : 0,
-        this.memberEngineClass1Winterize =
+        memberEngineClass1Winterize =
             json.containsKey('member_engine_class1_winterize')
                 ? json['member_engine_class1_winterize']
                 : 0,
-        this.memberEngineClass2Winterize =
+        memberEngineClass2Winterize =
             json.containsKey('member_engine_class2_winterize')
                 ? json['member_engine_class2_winterize']
                 : 0,
-        this.rentalBoatList =
-            fromJsonRentalBoatList(json['rental_boat_rentals']),
-        this.gasLiters =
-            json.containsKey('gas_liters') ? json['gas_liters'] : 0,
-        this.telephoneCalls =
+        rentalBoatList = fromJsonRentalBoatList(json['rental_boat_rentals']),
+        gasLiters = json.containsKey('gas_liters') ? json['gas_liters'] : 0,
+        telephoneCalls =
             json.containsKey('telephone_calls') ? json['telephone_calls'] : 0,
-        this.internetAccesses = json.containsKey('internet_accesses')
+        internetAccesses = json.containsKey('internet_accesses')
             ? json['internet_accesses']
             : 0,
-        this.laundryLoads =
+        laundryLoads =
             json.containsKey('laundry_loads') ? json['laundry_loads'] : 0,
-        this.firewood = json.containsKey('firewood') ? json['firewood'] : false,
-        this.firewoodCords =
+        firewood = json.containsKey('firewood') ? json['firewood'] : false,
+        firewoodCords =
             json.containsKey('firewood_cords') ? json['firewood_cords'] : 0,
-        this.firewoodDeliveryHours = json.containsKey('firewood_delivery_hours')
+        firewoodDeliveryHours = json.containsKey('firewood_delivery_hours')
             ? json['firewood_delivery_hours']
             : 0,
-        this.propane = json.containsKey('propane') ? json['propane'] : false,
-        this.propaneTanks =
+        propane = json.containsKey('propane') ? json['propane'] : false,
+        propaneTanks =
             json.containsKey('propane_tanks') ? json['propane_tanks'] : 0,
-        this.propaneDeliveryCharge = json.containsKey('propane_delivery_charge')
+        propaneDeliveryCharge = json.containsKey('propane_delivery_charge')
             ? json['propane_delivery_charge']
             : 0,
-        this.tipAmt = json.containsKey('tip') ? json['tip'] : 0,
-        this.payingWithCardClub = json.containsKey('paying_with_card_club')
+        tipPct = json.containsKey('tip_pct') ? json['tip_pct'] : 0,
+        tipAmt = json.containsKey('tip') ? json['tip'] : 0,
+        payingWithCardClub = json.containsKey('paying_with_card_club')
             ? json['paying_with_card_club']
             : false,
-        this.payingWithCardMgr = json.containsKey('paying_with_card_mgr')
+        payingWithCardMgr = json.containsKey('paying_with_card_mgr')
             ? json['paying_with_card_mgr']
             : false,
-        this.miscChargesList = json.containsKey('misc_charges')
+        miscChargesList = json.containsKey('misc_charges')
             ? fromJsonMiscChargeList(json['misc_charges'])
             : [],
         super(key: key);
@@ -230,6 +220,7 @@ class InputPage extends StatefulWidget {
         'propane': propane,
         'propane_tanks': propaneTanks,
         'propane_delivery_charge': propaneDeliveryCharge,
+        'tip_pct': tipPct,
         'tip': tipAmt,
         'paying_with_card_club': payingWithCardClub,
         'paying_with_card_mgr': payingWithCardMgr,
@@ -354,6 +345,7 @@ class InputPage extends StatefulWidget {
   bool propane = false;
   int propaneTanks = 0;
   double propaneDeliveryCharge = 0;
+  int tipPct = 0;
   double tipAmt = 0;
   bool payingWithCardClub = false;
   bool payingWithCardMgr = false;
@@ -379,6 +371,7 @@ class _InputPageState extends State<InputPage> {
   /* ------------------ attributes ----------------------------------*/
 
   int _activeCurrentStep = 0;
+  NumberFormat monetaryAmtFormat = new NumberFormat('#,##0.00', 'en_US');
 
   DateTime? arrivalDate;
   DateTime? departureDate;
@@ -446,6 +439,7 @@ class _InputPageState extends State<InputPage> {
   bool propane = false;
   int propaneTanks = 0;
   double propaneDeliveryCharge = 0;
+  int tipPct = 0;
   double tipAmt = 0;
   bool payingWithCardClub = false;
   bool payingWithCardMgr = false;
@@ -460,7 +454,7 @@ class _InputPageState extends State<InputPage> {
   }
 
   Future<String> fileName() async {
-    var returnValue;
+    String returnValue = '';
     // print('in fileName()');
     // print('widget.fileName is');
     // print(widget.fileName);
@@ -495,10 +489,10 @@ class _InputPageState extends State<InputPage> {
     // print(localFileName);
     widget.fileName = localFileName;
     String textToStore = textToStoreInFile();
-    print('textToStore is');
-    print('textToStore.length is');
-    print(textToStore.length);
-    print(textToStore);
+    //print('textToStore is');
+    //print('textToStore.length is');
+    //print(textToStore.length);
+    //print(textToStore);
     // print('textToStoreInFile is');
     // print(textToStore);
 
@@ -506,9 +500,14 @@ class _InputPageState extends State<InputPage> {
     //print(fileHelper.fileName);
     // print(fileHelper.fileContents);
     fileHelper.writeStringToFile();
+    // the following sleep is to avoid an error on the refresh
+    // of the file listing page
+    // there might be a more elegant way to avoid the error but
+    // I haven't figured it out
+    sleep(const Duration(milliseconds: 1000));
     //Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return StartPage(title: kYourTripsDescr);
+      return const StartPage(title: kYourTripsDescr);
     }));
   }
 
@@ -1244,7 +1243,26 @@ class _InputPageState extends State<InputPage> {
   /* ------------------- beginning of tip methods ------------------*/
 
   double tipTotal() {
-    return tipAmt;
+    return tipAmt + tipAmtAsPctOfBoard();
+  }
+
+  double tipAmtAsPctOfBoard() {
+    // print("totalBoardCharges is");
+    // print(totalBoardCharges.runtimeType);
+    // print(totalBoardCharges);
+    //  double tipPercent = tipPct / 100;
+    //  print("tipPercent is ");
+    //  print(tipPercent.runtimeType);
+    //  print(tipPercent);
+    //  double calculatedTip = totalBoardCharges() * tipPercent;
+    //  print('calculated tip is');
+    //  print(calculatedTip.runtimeType);
+    //  print(calculatedTip);
+    //  double roundedCalculatedTip = monetaryAmountRounded(calculatedTip);
+    //  print("roundedCalculatedTip is");
+    //  print(roundedCalculatedTip.runtimeType);
+    //  print(roundedCalculatedTip);
+    return monetaryAmountRounded(totalBoardCharges() * (tipPct / 100));
   }
 
   /* -------------beginning of card convenience fee methods --------*/
@@ -1699,7 +1717,7 @@ class _InputPageState extends State<InputPage> {
                                       includeArrivalDayBreakfast;
                                 });
                               }),
-                          Text(kBreakfastDescr),
+                          const Text(kBreakfastDescr),
                         ],
                       ),
                       Row(
@@ -1714,7 +1732,7 @@ class _InputPageState extends State<InputPage> {
                                       includeArrivalDayLunch;
                                 });
                               }),
-                          Text(kLunchDescr)
+                          const Text(kLunchDescr)
                         ],
                       ),
                       Row(
@@ -1728,7 +1746,7 @@ class _InputPageState extends State<InputPage> {
                                       includeArrivalDayDinner;
                                 });
                               }),
-                          Text(kDinnerDescr)
+                          const Text(kDinnerDescr)
                         ],
                       ),
                     ],
@@ -1749,7 +1767,7 @@ class _InputPageState extends State<InputPage> {
                                       includeDepartureDayBreakfast;
                                 });
                               }),
-                          Text(kBreakfastDescr),
+                          const Text(kBreakfastDescr),
                         ],
                       ),
                       Row(
@@ -1763,7 +1781,7 @@ class _InputPageState extends State<InputPage> {
                                       includeDepartureDayLunch;
                                 });
                               }),
-                          Text(kLunchDescr)
+                          const Text(kLunchDescr)
                         ],
                       ),
                       Row(
@@ -1777,7 +1795,7 @@ class _InputPageState extends State<InputPage> {
                                       includeDepartureDayDinner;
                                 });
                               }),
-                          Text(kDinnerDescr)
+                          const Text(kDinnerDescr)
                         ],
                       ),
                     ],
@@ -1810,7 +1828,7 @@ class _InputPageState extends State<InputPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(kLitersDescr),
+                const Text(kLitersDescr),
                 Row(
                   children: [
                     RoundIconButton(
@@ -1896,7 +1914,7 @@ class _InputPageState extends State<InputPage> {
                             widget.memberCabinOpenClose = memberCabinOpenClose;
                           });
                         }),
-                    Text(kMemberCabinOpenCloseDescr),
+                    const Text(kMemberCabinOpenCloseDescr),
                   ],
                 ),
               ),
@@ -1909,7 +1927,7 @@ class _InputPageState extends State<InputPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kToiletsToWinterize),
+                        const Text(kToiletsToWinterize),
                         Row(
                           children: [
                             RoundIconButton(
@@ -1969,7 +1987,7 @@ class _InputPageState extends State<InputPage> {
                                 memberCabinCleaningHours;
                           });
                         }),
-                    Text(kMemberCabinCleaningDescr),
+                    const Text(kMemberCabinCleaningDescr),
                   ],
                 ),
               ),
@@ -1982,7 +2000,7 @@ class _InputPageState extends State<InputPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kCleaningHoursDescr),
+                        const Text(kCleaningHoursDescr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2046,7 +2064,7 @@ class _InputPageState extends State<InputPage> {
                                 firewoodDeliveryHours;
                           });
                         }),
-                    Text(kFirewoodDescr),
+                    const Text(kFirewoodDescr),
                   ],
                 ),
               ),
@@ -2055,11 +2073,11 @@ class _InputPageState extends State<InputPage> {
                 child: Visibility(
                   visible: firewood,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(12, 0, 0, 4),
+                    padding: const EdgeInsets.fromLTRB(12, 0, 0, 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kFirewoodCordsDescr),
+                        const Text(kFirewoodCordsDescr),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -2106,7 +2124,7 @@ class _InputPageState extends State<InputPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kHoursToDeliverDescr),
+                        const Text(kHoursToDeliverDescr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2166,7 +2184,7 @@ class _InputPageState extends State<InputPage> {
                             // widget.propaneDeliveryCharge = propaneDeliveryCharge;
                           });
                         }),
-                    Text(kPropaneDescr),
+                    const Text(kPropaneDescr),
                   ],
                 ),
               ),
@@ -2175,11 +2193,11 @@ class _InputPageState extends State<InputPage> {
                 child: Visibility(
                   visible: propane,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(12, 0, 0, 4),
+                    padding: const EdgeInsets.fromLTRB(12, 0, 0, 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kPropaneTanksDescr),
+                        const Text(kPropaneTanksDescr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2293,20 +2311,17 @@ class _InputPageState extends State<InputPage> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
-                child: Text('$kClubCabin1Descr$kLabelEnderSymbol' +
-                    ' ' +
+                child: Text('$kClubCabin1Descr$kLabelEnderSymbol' ' ' +
                     stdOccupancyClubCabin1AsString()),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
-                child: Text('$kClubCabin2Descr$kLabelEnderSymbol' +
-                    ' ' +
+                child: Text('$kClubCabin2Descr$kLabelEnderSymbol' ' ' +
                     stdOccupancyClubCabin2AsString()),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
-                child: Text('$kClubCabinCasinoDescr$kLabelEnderSymbol' +
-                    ' ' +
+                child: Text('$kClubCabinCasinoDescr$kLabelEnderSymbol' ' ' +
                     stdOccupancyClubCabinCasinoAsString()),
               ),
               Padding(
@@ -2340,7 +2355,7 @@ class _InputPageState extends State<InputPage> {
                             widget.rentalClubCabin1 = rentalClubCabin1;
                           });
                         }),
-                    Text(kClubCabin1Descr),
+                    const Text(kClubCabin1Descr),
                   ],
                 ),
               ),
@@ -2351,7 +2366,7 @@ class _InputPageState extends State<InputPage> {
                   child: Row(
                     children: [
                       Row(children: [
-                        Text(kNumberOfPeopleDescr),
+                        const Text(kNumberOfPeopleDescr),
                         RoundIconButton(
                             icon: FontAwesomeIcons.plus,
                             onPressed: () {
@@ -2397,7 +2412,7 @@ class _InputPageState extends State<InputPage> {
                             widget.petInClubCabin1 = petInClubCabin1;
                           });
                         }),
-                    Text(kPetsDescr),
+                    const Text(kPetsDescr),
                   ]),
                 ),
               ),
@@ -2419,7 +2434,7 @@ class _InputPageState extends State<InputPage> {
                             widget.rentalClubCabin2 = rentalClubCabin2;
                           });
                         }),
-                    Text(kClubCabin2Descr)
+                    const Text(kClubCabin2Descr)
                   ],
                 ),
               ),
@@ -2430,7 +2445,7 @@ class _InputPageState extends State<InputPage> {
                   child: Row(
                     children: [
                       Row(children: [
-                        Text(kNumberOfPeopleDescr),
+                        const Text(kNumberOfPeopleDescr),
                         RoundIconButton(
                             icon: FontAwesomeIcons.plus,
                             onPressed: () {
@@ -2476,7 +2491,7 @@ class _InputPageState extends State<InputPage> {
                             widget.petInClubCabin2 = petInClubCabin2;
                           });
                         }),
-                    Text(kPetsDescr),
+                    const Text(kPetsDescr),
                   ]),
                 ),
               ),
@@ -2500,7 +2515,7 @@ class _InputPageState extends State<InputPage> {
                                 rentalClubCabinCasino;
                           });
                         }),
-                    Text(kClubCabinCasinoDescr)
+                    const Text(kClubCabinCasinoDescr)
                   ],
                 ),
               ),
@@ -2511,7 +2526,7 @@ class _InputPageState extends State<InputPage> {
                   child: Row(
                     children: [
                       Row(children: [
-                        Text(kNumberOfPeopleDescr),
+                        const Text(kNumberOfPeopleDescr),
                         RoundIconButton(
                             icon: FontAwesomeIcons.plus,
                             onPressed: () {
@@ -2559,7 +2574,7 @@ class _InputPageState extends State<InputPage> {
                             widget.petInClubCabinCasino = petInClubCabinCasino;
                           });
                         }),
-                    Text(kPetsDescr),
+                    const Text(kPetsDescr),
                   ]),
                 ),
               ),
@@ -2586,13 +2601,13 @@ class _InputPageState extends State<InputPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(kMemberBoatInOut),
+                const Text(kMemberBoatInOut),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 0, 4),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kMemberBoatClass1Descr),
+                        const Text(kMemberBoatClass1Descr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2633,7 +2648,7 @@ class _InputPageState extends State<InputPage> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kMemberBoatClass2Descr),
+                        const Text(kMemberBoatClass2Descr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2674,7 +2689,7 @@ class _InputPageState extends State<InputPage> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kMemberBoatClass3Descr),
+                        const Text(kMemberBoatClass3Descr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2710,13 +2725,13 @@ class _InputPageState extends State<InputPage> {
                         ),
                       ]),
                 ),
-                Text(kMemberEngineWinterizeDescr),
+                const Text(kMemberEngineWinterizeDescr),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 0, 4),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kMemberEngineClass1Descr),
+                        const Text(kMemberEngineClass1Descr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2757,7 +2772,7 @@ class _InputPageState extends State<InputPage> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(kMemberEngineClass2Descr),
+                        const Text(kMemberEngineClass2Descr),
                         Row(
                           children: [
                             RoundIconButton(
@@ -2968,7 +2983,7 @@ class _InputPageState extends State<InputPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(kTelephoneDescr),
+                    const Text(kTelephoneDescr),
                     Row(
                       children: [
                         RoundIconButton(
@@ -3008,7 +3023,7 @@ class _InputPageState extends State<InputPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(kInternetDescr),
+                    const Text(kInternetDescr),
                     Row(
                       children: [
                         RoundIconButton(
@@ -3048,7 +3063,7 @@ class _InputPageState extends State<InputPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(kLaundryDescr),
+                    const Text(kLaundryDescr),
                     Row(
                       children: [
                         RoundIconButton(
@@ -3234,11 +3249,48 @@ class _InputPageState extends State<InputPage> {
           content: Column(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(kTipPctDescr),
+                  Row(
+                    children: [
+                      RoundIconButton(
+                          icon: FontAwesomeIcons.plus,
+                          onPressed: () {
+                            setState(() {
+                              tipPct = tipPct + tipPctIncrement;
+                              widget.tipPct = tipPct;
+                            });
+                          }),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          tipPct.toString() + kPercentSymbol,
+                          style: kNumberTextStyle,
+                        ),
+                      ),
+                      RoundIconButton(
+                          icon: FontAwesomeIcons.minus,
+                          onPressed: () {
+                            setState(() {
+                              if (tipPct > tipPctIncrement) {
+                                tipPct = tipPct - tipPctIncrement;
+                              } else {
+                                tipPct = 0;
+                              }
+                              widget.tipPct = tipPct;
+                            });
+                          }),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(kTipDescr),
-                  Spacer(),
+                  const Text(kTipAmtDescr),
+                  const Spacer(),
                   Expanded(
                     child: TextFormField(
                         initialValue: tipAmt.toString(),
@@ -3292,7 +3344,7 @@ class _InputPageState extends State<InputPage> {
                           widget.payingWithCardClub = payingWithCardClub;
                         });
                       }),
-                  Text(kPayingClubBillWithCardDescr),
+                  const Text(kPayingClubBillWithCardDescr),
                 ],
               ),
               Row(
@@ -3307,7 +3359,7 @@ class _InputPageState extends State<InputPage> {
                           widget.payingWithCardMgr = payingWithCardMgr;
                         });
                       }),
-                  Text(kPayingMgrBillWithCardDescr),
+                  const Text(kPayingMgrBillWithCardDescr),
                 ],
               ),
             ],
@@ -3319,7 +3371,7 @@ class _InputPageState extends State<InputPage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              StepText(text: kResultsStep),
+              const StepText(text: kResultsStep),
               Visibility(
                 visible: grandTotal() != 0,
                 child: Text(
@@ -3345,7 +3397,8 @@ class _InputPageState extends State<InputPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(kClubDescr, style: kSummarySubheaderTextStyle),
+                          const Text(kClubDescr,
+                              style: kSummarySubheaderTextStyle),
                           Text(
                             grandTotalClub()
                                 .toStringAsFixed(kCurrencyPrecision),
@@ -3552,7 +3605,7 @@ class _InputPageState extends State<InputPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(kTipDescr, style: kSummarySubheaderTextStyle),
+                    const Text(kTipDescr, style: kSummarySubheaderTextStyle),
                     Text(
                       tipTotal().toStringAsFixed(kCurrencyPrecision),
                       style: kSummarySubheaderTextStyle,
@@ -3615,6 +3668,7 @@ class _InputPageState extends State<InputPage> {
     propane = widget.propane;
     propaneTanks = widget.propaneTanks;
     propaneDeliveryCharge = widget.propaneDeliveryCharge;
+    tipPct = widget.tipPct;
     tipAmt = widget.tipAmt;
     payingWithCardClub = widget.payingWithCardClub;
     payingWithCardMgr = widget.payingWithCardMgr;
@@ -3623,10 +3677,11 @@ class _InputPageState extends State<InputPage> {
 
   /* -------------beginning of widget build------------------------ */
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(kAppTitle2),
+        title: const Text(kAppTitle2),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -3640,6 +3695,7 @@ class _InputPageState extends State<InputPage> {
                 Expanded(
                   child: TextFormField(
                     initialValue: estimateName,
+                    maxLength: 20,
                     style: kStepTitleTextStyle,
                     decoration: const InputDecoration(
                       hintText: kEstimateNameHint,
@@ -3722,7 +3778,7 @@ class _InputPageState extends State<InputPage> {
             ),
             Flexible(
               flex: 1,
-              child: Container(
+              child: SizedBox(
                 height: 100,
                 // color: Colors.amber,
                 child: Row(

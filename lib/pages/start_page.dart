@@ -6,11 +6,10 @@ import '../components/round_icon_button.dart';
 //import 'package:pythonga_expense_estimator/components/bottom_button.dart';
 import '../components/file_listing.dart';
 
-// import 'package:pythonga_expense_estimator/components/test_file_listing.dart';
+//import 'package:pythonga_expense_estimator/components/test_file_listing.dart';
 import '../pages/input_page.dart';
 import '../constants/text_constants.dart';
 import '../constants/style_constants.dart';
-import '../pages/test_entry_page.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({Key? key, required this.title}) : super(key: key);
@@ -34,29 +33,22 @@ class _StartPageState extends State<StartPage> {
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
-        child: Column(children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              kYourEstimatesDescr,
-              style: kHeaderTextStyle,
-            ),
-          ),
-          RoundIconButton(
-              icon: FontAwesomeIcons.plus,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return InputPage(
-                      title: 'New Estimate',
-                      isNewEstimate: true,
-                      fileName: 'xx');
-                }));
-              }),
-          FileListing(),
-          /*
+        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  kYourEstimatesDescr,
+                  style: kHeaderTextStyle,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(kEstimateTripDescr),
               RoundIconButton(
                   icon: FontAwesomeIcons.plus,
                   onPressed: () {
@@ -67,25 +59,10 @@ class _StartPageState extends State<StartPage> {
                           isNewEstimate: true,
                           fileName: 'xx');
                     }));
-                  })
+                  }),
             ],
           ),
-          */
-/*
-          Row(
-            children: [
-              Text('Test Entry Page'),
-              RoundIconButton(
-                  icon: FontAwesomeIcons.plus,
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return TestEntryPage();
-                    }));
-                  })
-            ],
-          ),
-          */
+          const FileListing(),
         ]),
       ),
     );

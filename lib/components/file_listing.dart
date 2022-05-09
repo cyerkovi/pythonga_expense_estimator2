@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'dart:convert';
 // import 'dart:io';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart' as pathpkg;
-import '../components/bottom_button.dart';
-import '../components/round_icon_button.dart';
+import 'package:pythonga_expense_estimator/constants/text_constants.dart';
 import '../components/rounded_icon_button.dart';
 import '../constants/style_constants.dart';
 import '../services/directory_services.dart';
 import '../pages/input_page.dart';
 
 class FileListing extends StatefulWidget {
-  FileListing();
+  const FileListing();
 
   @override
   State<FileListing> createState() => _FileListingState();
@@ -49,36 +46,7 @@ class _FileListingState extends State<FileListing> {
     }
   }
 
-  String filenameAlias(file) {
-    //sync read will not work
-    // try async read
-    String fileContent = file.readAsStringSync();
-    // sleep(const Duration(seconds: 5));
-    Map decodedData = {"estimate_name": "fake_trip"};
-    // var decodedData = jsonDecode(fileContent);
-    String estimateName = 'bb';
-    if (decodedData.containsKey('estimate_name')) {
-      if (decodedData['estimate_name'].isEmpty) {
-        estimateName = 'cc';
-      } else {
-        estimateName = decodedData['estimate_name'];
-      }
-    } else {
-      estimateName = 'dd';
-    }
-    return estimateName;
-  }
-
-  /*
-  String filenameAlias(file) {
-    String fileContent = file.readAsStringSync();
-    var decodedData = jsonDecode(fileContent);
-    if (decodedData['arrival_date'] == null) {
-      return 'No Date';
-    }
-    DateTime arrivalDate = transformJsonDateTime(decodedData['arrival_date']);
-    DateTime departureDate =
-        transformJsonDateTime(decodedData['departure_date']);
+  String datesUsedForFilenameAlias(arrivalDate, departureDate) {
     final DateFormat formatter = DateFormat('MM/dd/yyyy');
     String formattedArrivalDate = formatter.format(arrivalDate);
     String formattedDepartureDate = formatter.format(departureDate);
@@ -86,7 +54,79 @@ class _FileListingState extends State<FileListing> {
     return returnName;
   }
 
-   */
+  String filenameAlias(file) {
+    String fileContent = file.readAsStringSync();
+    // Map decodedData = {"estimate_name": "fake_trip"};
+    var decodedData = jsonDecode(fileContent);
+    String alias = 'Untitled Estimate';
+    if (decodedData.containsKey('estimate_name')) {
+      if (decodedData['estimate_name'].isNotEmpty) {
+        alias = decodedData['estimate_name'];
+      } else if (decodedData['arrival_date'] != null) {
+        if (decodedData['arrival_date'].isNotEmpty &&
+            decodedData['departure_date'].isNotEmpty) {
+          DateTime arrivalDate =
+              transformJsonDateTime(decodedData['arrival_date']);
+          DateTime departureDate =
+              transformJsonDateTime(decodedData['departure_date']);
+          alias = datesUsedForFilenameAlias(arrivalDate, departureDate);
+        }
+      }
+    } else {
+      alias = 'Untitled';
+    }
+    return alias;
+  }
+
+  /*
+  Widget cancelButton = TextButton(
+    child: Text(kDoNotDeleteDescr),
+    onPressed: () {},
+  );
+  Widget deleteButton = TextButton(
+    child: Text(kDeleteDescr),
+    onPressed: () {},
+  );
+
+  */
+
+  Future<void> _showConfirmDeleteDialog(file, fileMap) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(kConfirmationDescr),
+            actions: [
+              TextButton(
+                child: const Text(kDeleteDescr),
+                onPressed: () {
+                  setState(() {
+                    file.deleteSync();
+                    fileMap.remove(file);
+                    Navigator.of(context).pop();
+                  });
+                },
+              ),
+              TextButton(
+                child: const Text(kDoNotDeleteDescr),
+                onPressed: () {
+                  setState(() {
+                    Navigator.of(context).pop();
+                  });
+                },
+              ),
+            ],
+            content: SingleChildScrollView(
+              child: Column(
+                children: const [
+                  Text(kConfirmationDescr2),
+                ],
+              ),
+            ),
+          );
+        });
+  }
 
   Future<List<Widget>> fileListMappedAsWidget() async {
     var fileHits =
@@ -94,33 +134,47 @@ class _FileListingState extends State<FileListing> {
     List<Widget> newList = [];
     fileHits.forEach((k, v) {
       String fileNameUserFacing = filenameAlias(k);
-      newList.add(Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(pathpkg.basename(v)),
-          // Text(fileNameUserFacing, style: kEstimateListingTextStyle),
-          SizedBox(width: 50),
-          RoundedIconButton(
-              icon: Icons.edit,
-              onPressed: () => () {
-                    String fileContent = k.readAsStringSync();
-                    var decodedData = jsonDecode(fileContent);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return InputPage.fromJson(decodedData);
-                      }),
-                    );
-                  }),
-          RoundedIconButton(
-              icon: Icons.delete,
-              onPressed: () => () {
-                    setState(() {
-                      k.deleteSync();
-                      fileMap.remove(k);
-                    });
-                  })
-        ],
+      newList.add(Padding(
+        padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Text(pathpkg.basename(v)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(fileNameUserFacing, style: kEstimateListingTextStyle),
+              ],
+            ),
+            //SizedBox(width: 50),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                RoundedIconButton(
+                    icon: Icons.edit,
+                    onPressed: () => () {
+                          String fileContent = k.readAsStringSync();
+                          var decodedData = jsonDecode(fileContent);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) {
+                              return InputPage.fromJson(decodedData);
+                            }),
+                          );
+                        }),
+                RoundedIconButton(
+                    icon: Icons.delete,
+                    onPressed: () => () {
+                          // setState(() {
+                          _showConfirmDeleteDialog(k, fileMap);
+                          //k.deleteSync();
+                          // fileMap.remove(k);
+                          // });
+                        })
+              ],
+            ),
+          ],
+        ),
       ));
     });
     // () => newList;

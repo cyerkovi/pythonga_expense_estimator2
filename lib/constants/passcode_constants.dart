@@ -1,0 +1,1 @@
+const kPasscodeValue = 'lake22';

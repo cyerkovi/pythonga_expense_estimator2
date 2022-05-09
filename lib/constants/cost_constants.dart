@@ -9,10 +9,10 @@ const String kChildClass4 = 'child<1';
 const Map kCostRates = {
   2022: {
     'board_daily_rate': {
-      kAdult: 47.00,
-      kChildClass1: 42.51,
-      kChildClass2: 29.00,
-      kChildClass3: 17.00,
+      kAdult: 62.50,
+      kChildClass1: 56.00,
+      kChildClass2: 38.50,
+      kChildClass3: 36.00,
       kChildClass4: 0.00
     },
     'guest_fees': {

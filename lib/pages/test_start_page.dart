@@ -23,7 +23,7 @@ class _TestStartPageState extends State<TestStartPage> {
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
-        child: Column(children: [
+        child: Column(children: const [
           Text(kYourEstimatesDescr),
           TestFileListing(),
         ]),
