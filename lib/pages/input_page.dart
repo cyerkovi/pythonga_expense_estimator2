@@ -475,6 +475,7 @@ class _InputPageState extends State<InputPage> {
     }
     return returnValue;
   }
+/* ---------------- save and cancel estimate methods ---------------*/
 
   Future<void> saveAction() async {
     //print('in saveAction');
@@ -504,7 +505,7 @@ class _InputPageState extends State<InputPage> {
     // of the file listing page
     // there might be a more elegant way to avoid the error but
     // I haven't figured it out
-    sleep(const Duration(milliseconds: 1000));
+    sleep(const Duration(milliseconds: nSleepOnSaveMilliseconds));
     //Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return const StartPage(title: kYourTripsDescr);

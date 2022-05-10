@@ -23,6 +23,7 @@ class PythongaVisitCostCalculator extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
+  /*
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder(
@@ -62,8 +63,8 @@ class PythongaVisitCostCalculator extends StatelessWidget {
           }),
     );
   }
+*/
 
-  /*
   Widget build(BuildContext context) {
     return MaterialApp(
       title: kAppTitle1,
@@ -93,5 +94,4 @@ class PythongaVisitCostCalculator extends StatelessWidget {
       //home: targetPage,
     );
   }
-  */
 }
