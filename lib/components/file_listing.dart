@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-// import 'dart:io';
 import 'package:intl/intl.dart';
+// import 'package:path/path.dart' as pathpkg;
 import 'package:pythonga_expense_estimator/constants/text_constants.dart';
 import '../components/rounded_icon_button.dart';
 import '../constants/style_constants.dart';
@@ -58,22 +58,25 @@ class _FileListingState extends State<FileListing> {
     String fileContent = file.readAsStringSync();
     // Map decodedData = {"estimate_name": "fake_trip"};
     var decodedData = jsonDecode(fileContent);
-    String alias = 'Untitled Estimate';
-    if (decodedData.containsKey('estimate_name')) {
-      if (decodedData['estimate_name'].isNotEmpty) {
-        alias = decodedData['estimate_name'];
-      } else if (decodedData['arrival_date'] != null) {
-        if (decodedData['arrival_date'].isNotEmpty &&
-            decodedData['departure_date'].isNotEmpty) {
-          DateTime arrivalDate =
-              transformJsonDateTime(decodedData['arrival_date']);
-          DateTime departureDate =
-              transformJsonDateTime(decodedData['departure_date']);
-          alias = datesUsedForFilenameAlias(arrivalDate, departureDate);
+    String alias = 'Empty Json';
+    if (decodedData.length != 0) {
+      if (decodedData.containsKey('estimate_name')) {
+        if (decodedData['estimate_name'].isNotEmpty) {
+          alias = decodedData['estimate_name'];
+        } else if (decodedData['arrival_date'] != null) {
+          if (decodedData['arrival_date'].isNotEmpty &&
+              decodedData['departure_date'].isNotEmpty) {
+            DateTime arrivalDate =
+                transformJsonDateTime(decodedData['arrival_date']);
+            DateTime departureDate =
+                transformJsonDateTime(decodedData['departure_date']);
+            alias = datesUsedForFilenameAlias(arrivalDate, departureDate);
+          }
         }
+      } else {
+        alias = 'Untitled Estimate';
       }
-    } else {
-      alias = 'Untitled';
+      return alias;
     }
     return alias;
   }
@@ -139,7 +142,7 @@ class _FileListingState extends State<FileListing> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Text(pathpkg.basename(v)),
+            //Text(pathpkg.basename(v)),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

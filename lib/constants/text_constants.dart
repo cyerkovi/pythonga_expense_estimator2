@@ -104,7 +104,6 @@ const kChildClass4Descr = 'Children < 1';
 const kLabelEnderSymbol = ':';
 const kInterogatorySymbol = '?';
 const kSpace = ' ';
-// const kEstimateFileExtension = '.txt';
 const kEstimateFileExtension = '.json';
 const kCurrencySymbol = '\$';
 const kPercentSymbol = '%';
