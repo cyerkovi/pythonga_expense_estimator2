@@ -42,54 +42,58 @@ class _PasscodeFormPageState extends State<PasscodeFormPage> {
       body: SafeArea(
         child: Form(
           key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(kPasscodeDescr, style: kHeaderTextStyle),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0.0, 0, 8, 0),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(kPasscodeDescr, style: kHeaderTextStyle),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0.0, 0, 8, 0),
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            obscureText: true,
+                            enableSuggestions: false,
+                            autocorrect: false,
+                            validator: (value) {
+                              passcode = kPasscodeValue;
+                              if (value == null || value.isEmpty) {
+                                return kPasscodeDescr2;
+                              } else if (value != passcode) {
+                                return '$value$kPasscodeIncorrectMessage';
+                              } else {
+                                return null;
+                              }
+                            },
                           ),
-                          obscureText: true,
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          validator: (value) {
-                            passcode = kPasscodeValue;
-                            if (value == null || value.isEmpty) {
-                              return kPasscodeDescr2;
-                            } else if (value != passcode) {
-                              return '$value$kPasscodeIncorrectMessage';
-                            } else {
-                              return null;
-                            }
-                          },
                         ),
                       ),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () => submitAction(),
-                          child: Icon(
-                            Icons.login,
-                            size: 50,
-                            color: Colors.grey[400],
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () => submitAction(),
+                            child: Icon(
+                              Icons.login,
+                              size: 50,
+                              color: Colors.grey[400],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

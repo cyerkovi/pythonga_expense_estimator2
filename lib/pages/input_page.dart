@@ -139,6 +139,7 @@ class InputPage extends StatefulWidget {
                 : 0,
         rentalBoatList = fromJsonRentalBoatList(json['rental_boat_rentals']),
         gasLiters = json.containsKey('gas_liters') ? json['gas_liters'] : 0,
+        gasPrice = json.containsKey('gas_price') ? json['gas_price'] : 0,
         telephoneCalls =
             json.containsKey('telephone_calls') ? json['telephone_calls'] : 0,
         internetAccesses = json.containsKey('internet_accesses')
@@ -211,6 +212,7 @@ class InputPage extends StatefulWidget {
         'member_engine_class2_winterize': memberEngineClass2Winterize,
         'rental_boat_rentals': toJsonRentalBoat(),
         'gas_liters': gasLiters,
+        'gas_price': gasPrice,
         'telephone_calls': telephoneCalls,
         'internet_accesses': internetAccesses,
         'laundry_loads': laundryLoads,
@@ -317,6 +319,8 @@ class InputPage extends StatefulWidget {
   int peopleInClubCabin2 = 0;
   bool petInClubCabin2 = false;
 
+  int tripYear = DateTime.now().year;
+
   bool rentalClubCabinCasino = false;
   int peopleInClubCabinCasino = 0;
   bool petInClubCabinCasino = false;
@@ -336,6 +340,7 @@ class InputPage extends StatefulWidget {
     kRentalBoatClass3Descr
   ];
   int gasLiters = 0;
+  double gasPrice = 0;
   int telephoneCalls = 0;
   int internetAccesses = 0;
   int laundryLoads = 0;
@@ -430,6 +435,7 @@ class _InputPageState extends State<InputPage> {
     kRentalBoatClass3Descr
   ];
   int gasLiters = 0;
+  double gasPrice = 0;
   int telephoneCalls = 0;
   int internetAccesses = 0;
   int laundryLoads = 0;
@@ -1110,12 +1116,15 @@ class _InputPageState extends State<InputPage> {
 
   double totalGasCharge() {
     // return totalMemberBoatGasCharge() + totalRentalBoatGasCharges();
-    return monetaryAmountRounded(gasPrice() * gasLiters);
+    return monetaryAmountRounded(gasPrice * gasLiters);
   }
 
+  /*
   double gasPrice() {
     return (kCostRates[tripYear]['gasoline_price_per_liter']).toDouble();
   }
+
+   */
 
   /*
   double totalRentalBoatGasCharges() {
@@ -1826,37 +1835,69 @@ class _InputPageState extends State<InputPage> {
             ],
           ),
           content: Column(children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              const Text(kLitersDescr),
+              Row(children: [
+                RoundIconButton(
+                    icon: FontAwesomeIcons.plus,
+                    onPressed: () {
+                      setState(() {
+                        gasLiters = gasLiters + literIncrement;
+                        widget.gasLiters = gasLiters;
+                      });
+                    }),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    gasLiters.toString(),
+                    style: kNumberTextStyle,
+                  ),
+                ),
+                RoundIconButton(
+                    icon: FontAwesomeIcons.minus,
+                    onPressed: () {
+                      setState(() {
+                        if (gasLiters > literIncrement) {
+                          gasLiters = gasLiters - literIncrement;
+                        } else {
+                          gasLiters = 0;
+                        }
+                        widget.gasLiters = gasLiters;
+                      });
+                    }),
+              ]),
+            ]),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(kLitersDescr),
+                const Text(kPricePerLiterDescr),
                 Row(
                   children: [
                     RoundIconButton(
                         icon: FontAwesomeIcons.plus,
                         onPressed: () {
                           setState(() {
-                            gasLiters = gasLiters + literIncrement;
-                            widget.gasLiters = gasLiters;
+                            gasPrice = gasPrice + pricePerLiterIncrement;
+                            widget.gasPrice = gasPrice;
                           });
                         }),
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        gasLiters.toString(),
-                        style: kNumberTextStyle,
+                        monetaryAmountRoundedToCurrencyString(gasPrice),
+                        style: kNumberSmallSizeTextStyle,
                       ),
                     ),
                     RoundIconButton(
                         icon: FontAwesomeIcons.minus,
                         onPressed: () {
                           setState(() {
-                            if (gasLiters > literIncrement) {
-                              gasLiters = gasLiters - literIncrement;
+                            if (gasPrice > pricePerLiterIncrement) {
+                              gasPrice = gasPrice - pricePerLiterIncrement;
                             } else {
-                              gasLiters = 0;
+                              gasPrice = 0;
                             }
-                            widget.gasLiters = gasLiters;
+                            widget.gasPrice = gasPrice;
                           });
                         }),
                   ],
@@ -3660,6 +3701,10 @@ class _InputPageState extends State<InputPage> {
     memberEngineClass2Winterize = widget.memberEngineClass2Winterize;
     rentalBoatList = widget.rentalBoatList;
     gasLiters = widget.gasLiters;
+    if (widget.gasPrice == 0) {
+      widget.gasPrice = kCostRates[tripYear]['gasoline_price_per_liter'];
+    }
+    gasPrice = widget.gasPrice;
     telephoneCalls = widget.telephoneCalls;
     internetAccesses = widget.internetAccesses;
     laundryLoads = widget.laundryLoads;

@@ -5,6 +5,11 @@ const kNumberTextStyle = TextStyle(
   fontSize: 22.0,
   fontWeight: FontWeight.bold,
 );
+
+const kNumberSmallSizeTextStyle = TextStyle(
+  fontSize: 16.0,
+  fontWeight: FontWeight.bold,
+);
 const kInstructionTextStyle =
     TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold);
 

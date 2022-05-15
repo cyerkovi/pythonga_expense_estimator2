@@ -57,6 +57,7 @@ const kRentalBoatClass3Descr = '30 hp Boat';
 const kGasDescr = 'Gas';
 const kGasolineDescr = 'Estimated Gas Consumption';
 const kLitersDescr = 'Liters';
+const kPricePerLiterDescr = '\$ per Liter';
 const kPropaneDescr = 'Propane';
 const kPropaneTanksDescr = 'Tanks';
 const kElectricity = 'Electricity';
